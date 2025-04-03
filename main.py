@@ -7,3 +7,5 @@ if not results:
 else:
     for i, row in enumerate(results, 1):
         print(f"{i:02}. {row['Isbn']} | {row['Title']} | {row['Authors']} | {row['Status']}")
+
+
