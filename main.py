@@ -1,6 +1,7 @@
 from lib.search import search_books
 from lib.borrower import create_borrower
 from lib.fines import update_fines, display_fines, pay_fines
+from lib.loaning import checkin, checkout
 
 def main():
     while True:
@@ -10,7 +11,9 @@ def main():
         print("3. Update Fines")
         print("4. Display Fines")
         print("5. Pay Fines")
-        print("6. Exit")
+        print("6. Check Out Book")
+        print("7. Check In Book")
+        print("8. Exit")
 
         choice = input("Enter choice: ").strip()
 
@@ -41,6 +44,19 @@ def main():
             pay_fines(card_id)
 
         elif choice == '6':
+            # check out books
+            isbn = input("Enter ISBN of the book to check out: ").strip()
+            borrower_id = input("Enter Borrower ID: ").strip()
+            checkout(isbn, borrower_id)
+
+        elif choice == '7':
+            # check in books
+            isbn = input("Enter ISBN of the book to check in: ").strip()
+            card_no = input("Enter Card ID: ").strip()
+            name = input("Enter Borrower Name: ").strip()
+            checkin(isbn, card_no, name)
+        
+        elif choice == '8':
             print("Goodbye!")
             break
 
