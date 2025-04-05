@@ -77,8 +77,3 @@ python main.py
 - Close DB Browser or any tool locking the `.db` file before running Python.
 - Use parameterized queries to prevent SQL injection and locking issues.
 - Book availability is tracked using a `Status` column in `BOOK`.
-
----
-
-Developed for CS4347 – Database Systems  
-Milestone 2 Submission
