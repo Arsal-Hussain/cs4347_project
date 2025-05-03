@@ -3,7 +3,18 @@ from lib.borrower import create_borrower
 from lib.fines import update_fines, display_fines, pay_fines
 from lib.loaning import checkin, checkout
 
-def main():
+import tkinter as tk
+from ui.borrower_form import open_borrower_form
+
+root = tk.Tk()
+root.title("Library System")
+
+main_btn = tk.Button(root, text="Register Borrower", command=lambda: open_borrower_form(root))
+main_btn.pack(pady=20)
+
+root.mainloop()
+
+'''def main():
     while True:
         print("\n--- Library Menu ---")
         print("1. Search Books")
@@ -64,4 +75,4 @@ def main():
             print("Invalid choice.")
 
 if __name__ == "__main__":
-    main()
+    main()'''
