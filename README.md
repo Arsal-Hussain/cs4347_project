@@ -61,15 +61,17 @@ Run the following from the `db` directory:
 ```bash
 sqlite3 library.db < schema.sql
 sqlite3 library.db < init_data.sql
-
+```
 If needed, add the Status column to the BOOK table:
 ```bash
 ALTER TABLE BOOK ADD COLUMN Status TEXT DEFAULT 'IN';
-
+```
 ## Run Program
 From root folder:
 ```bash
 python main.py
+```
 For GUI
 ```bash
 python ui/main_gui.py
+```
