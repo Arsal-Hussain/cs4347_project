@@ -5,12 +5,19 @@ from lib.loaning import checkin, checkout
 
 import tkinter as tk
 from ui.borrower_form import open_borrower_form
+from ui.fines_form import open_fines_nav
 
 root = tk.Tk()
 root.title("Library System")
 
-main_btn = tk.Button(root, text="Register Borrower", command=lambda: open_borrower_form(root))
-main_btn.pack(pady=20)
+
+
+borrow_btn = tk.Button(root, text="Register Borrower", command=lambda: open_borrower_form(root))
+borrow_btn.pack(pady=20)
+
+fines_btn = tk.Button(root, text="Fines", command=lambda: open_fines_nav(root))
+fines_btn.pack(pady=20)
+
 
 root.mainloop()
 

@@ -108,8 +108,11 @@ def display_fines(show_paid = False):
         
         # Print Fines
         print("Fines Due:")
+        return results
+    
         for card_id, name, total_fine in results:
             print(f"Borrower: {name} (Card ID: {card_id}) - Total Fine: ${total_fine:.2f}")
+            
     except Exception as e:
         print(f"Error Displaying Fines: {e}")
         return []
