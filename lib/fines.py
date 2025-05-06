@@ -142,9 +142,10 @@ def pay_fines(card_id):
                               WHERE F.Loan_id = B.Loan_id AND B.Card_id = ? 
                               AND F.Paid = 0 AND B.Date_in IS NOT NULL);""", (card_id,))
             conn.commit()
-            print(f"Member with Card ID: {card_id} has paid the total fine of: ${total_fine:.2f}")
+            return f"Success: Member with Card ID {card_id} has paid the total fine of: ${total_fine:.2f}"
         else:
-            print("No outstanding fines detected at this time. Please ensure that all books previously checked out have been returned.")
+            return "Info: No outstanding fines. Ensure all overdue books are checked in first."
+
     except Exception as e:
         print(f"Error Displaying Fines: {e}")
         return []

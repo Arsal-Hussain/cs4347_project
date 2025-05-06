@@ -1,12 +1,13 @@
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import tkinter as tk
 from tkinter import ttk, messagebox
 from lib.search import search_books
 from lib.borrower import create_borrower
 from lib.loaning import checkout, checkin
-from lib.fines import update_fines, display_fines, pay_fines
+from ui.fines_form import open_fines_nav  # NEW IMPORT
 
 class LibraryGUI(tk.Tk):
     def __init__(self):
@@ -16,18 +17,14 @@ class LibraryGUI(tk.Tk):
         self.create_widgets()
 
     def create_widgets(self):
-        # Menu Buttons
         options = [
             ("Search Books", self.search_books_ui),
             ("Register Borrower", self.register_borrower_ui),
-            ("Update Fines", self.update_fines_ui),
-            ("Display Fines", self.display_fines_ui),
-            ("Pay Fines", self.pay_fines_ui),
+            ("Fines", lambda: open_fines_nav(self)),
             ("Check Out Book", self.checkout_ui),
             ("Check In Book", self.checkin_ui),
         ]
-
-        for idx, (text, command) in enumerate(options):
+        for _, (text, command) in enumerate(options):
             btn = ttk.Button(self, text=text, command=command)
             btn.pack(pady=5, fill='x')
 
@@ -35,27 +32,39 @@ class LibraryGUI(tk.Tk):
         top = tk.Toplevel(self)
         top.title("Search Books")
 
-        tk.Label(top, text="Enter Title, Author, or ISBN:").pack()
-        entry = tk.Entry(top)
-        entry.pack()
+        tk.Label(top, text="Enter Title, Author, or ISBN:").pack(pady=5)
+        entry = tk.Entry(top, width=50)
+        entry.pack(pady=5)
 
-        output = tk.Text(top, height=10)
-        output.pack()
+        columns = ("ISBN", "Title", "Authors", "Checked Out", "Borrower ID")
+        tree = ttk.Treeview(top, columns=columns, show="headings")
+        for col in columns:
+            tree.heading(col, text=col)
+            tree.column(col, width=150, anchor="center")
+        tree.pack(pady=10, padx=10, fill="both", expand=True)
 
         def search_action():
             keyword = entry.get()
             results = search_books(keyword)
-            output.delete("1.0", tk.END)
+            tree.delete(*tree.get_children())  # Clear previous results
             for row in results:
-                output.insert(tk.END, f"{row['Isbn']} | {row['Title']} | {row['Authors']} | {row['Status']}\n")
+                tree.insert("", "end", values=(
+                    row['Isbn'],
+                    row['Title'],
+                    row['Authors'],
+                    row['Status'],
+                    row['Borrower_id'] if row['Borrower_id'] else ""
+                ))
 
-        tk.Button(top, text="Search", command=search_action).pack()
+        tk.Button(top, text="Search", command=search_action).pack(pady=5)
+
+
 
     def register_borrower_ui(self):
         top = tk.Toplevel(self)
         top.title("Register Borrower")
 
-        labels = ["First Name", "Last Name", "Address", "Phone (optional)"]
+        labels = ["First Name", "Last Name", "SSN", "Address", "Phone"]
         entries = []
 
         for label in labels:
@@ -65,40 +74,16 @@ class LibraryGUI(tk.Tk):
             entries.append(entry)
 
         def register_action():
-            fname, lname, address, phone = [e.get() for e in entries]
-            card_id = create_borrower(fname, lname, address, phone)
-            messagebox.showinfo("Success", f"Borrower Registered. Card ID: {card_id}")
-            top.destroy()
+            fname, lname, ssn, address, phone = [e.get().strip() for e in entries]
+            full_name = f"{fname} {lname}"
+            response = create_borrower(full_name, ssn, address, phone)
+            if response.startswith("Success"):
+                messagebox.showinfo("Success", f"Borrower Registered.\n{response}")
+                top.destroy()
+            else:
+                messagebox.showerror("Error", response)
 
         tk.Button(top, text="Register", command=register_action).pack()
-
-    def update_fines_ui(self):
-        update_fines()
-        messagebox.showinfo("Fines", "Fines updated successfully.")
-
-    def display_fines_ui(self):
-        fines = display_fines()
-        top = tk.Toplevel(self)
-        top.title("Display Fines")
-        text = tk.Text(top)
-        text.pack()
-        for fine in fines:
-            text.insert(tk.END, f"{fine}\n")
-
-    def pay_fines_ui(self):
-        top = tk.Toplevel(self)
-        top.title("Pay Fines")
-
-        tk.Label(top, text="Enter Card ID:").pack()
-        entry = tk.Entry(top)
-        entry.pack()
-
-        def pay_action():
-            card_id = entry.get()
-            pay_fines(card_id)
-            messagebox.showinfo("Success", f"Fines paid for Card ID: {card_id}")
-
-        tk.Button(top, text="Pay", command=pay_action).pack()
 
     def checkout_ui(self):
         top = tk.Toplevel(self)

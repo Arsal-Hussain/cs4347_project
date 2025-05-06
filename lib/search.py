@@ -5,7 +5,7 @@ from lib.database import get_connection
 def search_books(keyword):
     """
     Search for books by ISBN, title, or author substring (case-insensitive).
-    Returns a list of dicts with ISBN, Title, Authors, Status ("IN" or "OUT").
+    Returns a list of dicts with ISBN, Title, Authors, Status ("IN"/"OUT"), Borrower ID (if OUT).
     """
     keyword = f"%{keyword.lower()}%"
     conn = get_connection()
@@ -23,7 +23,13 @@ def search_books(keyword):
                 WHERE bl.Isbn = b.Isbn AND bl.Date_in IS NULL
             ) THEN 'OUT'
             ELSE 'IN'
-        END AS Status
+        END AS Status,
+        (
+            SELECT bl.Card_id
+            FROM BOOK_LOANS bl
+            WHERE bl.Isbn = b.Isbn AND bl.Date_in IS NULL
+            LIMIT 1
+        ) AS Borrower_id
     FROM BOOK b
     JOIN BOOK_AUTHORS ba ON b.Isbn = ba.Isbn
     JOIN AUTHORS a ON ba.Author_id = a.Author_id

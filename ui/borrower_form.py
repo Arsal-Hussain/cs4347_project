@@ -32,28 +32,25 @@ def open_borrower_form(parent):
         address = address_entry.get().strip()
         phone = phone_entry.get().strip()
 
-            # Validate name (must have at least two words)
         if len(name.split()) < 2:
             messagebox.showerror("Validation Error", "Please enter at least a first and last name.")
             return
 
-        # Validate SSN format: "###-##-####"
         if not re.fullmatch(r"\d{3}-\d{2}-\d{4}", ssn):
             messagebox.showerror("Validation Error", "SSN must be in the format ###-##-####.")
             return
 
-        # Validate phone number format: "(###) ### ####"
         if not re.fullmatch(r"\(\d{3}\) \d{3}-\d{4}", phone):
             messagebox.showerror("Validation Error", "Phone must be in the format (###) ###-####.")
             return
 
-
         response = create_borrower(name, ssn, address, phone)
-        if "Success:" in response:
-            messagebox.showinfo("Success", response)
+        if response.startswith("Success"):
+            messagebox.showinfo("Success", f"Borrower Registered.\n{response}")
             window.destroy()
         else:
             messagebox.showerror("Error", response)
+
 
 
     # Submit button
